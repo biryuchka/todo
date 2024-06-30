@@ -7,7 +7,7 @@ class MyLogger {
   );
 
   static Level _getLogLevel() {
-    bool isProduction = bool.fromEnvironment('dart.vm.product');
+    bool isProduction = const bool.fromEnvironment('dart.vm.product');
     return isProduction ? Level.nothing : Level.verbose;
   }
 

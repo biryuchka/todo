@@ -7,7 +7,7 @@ import '../../domain/model/task.dart';
 
 class DbRepository {
   static const tableTasks = 'task';
-  static const tableRevisions= 'revision';
+  static const tableRevisions = 'revision';
 
   DbRepository();
 
@@ -15,15 +15,17 @@ class DbRepository {
     String path = await getDatabasesPath();
     return openDatabase(
       join(path, 'database.db'),
-      version: 1, onCreate: (db, version) async {
-      await db.execute('CREATE TABLE IF NOT EXISTS $tableTasks '
-          '(id TEXT PRIMARY KEY, done BOOLEAN NOT NULL CHECK (done IN (0, 1)), '
-          'text TEXT, importance TEXT, deadline INTEGER, createdAt INTEGER, '
-          'updatedAt INTEGER, lastUpdatedBy TEXT, color TEXT)');
-      await db.execute('CREATE TABLE IF NOT EXISTS $tableRevisions'
-          '(id INTEGER PRIMARY KEY, revision INTEGER)');
-      await db.execute('INSERT INTO $tableRevisions(id, revision) VALUES (1, 0)');
-    },
+      version: 1,
+      onCreate: (db, version) async {
+        await db.execute('CREATE TABLE IF NOT EXISTS $tableTasks '
+            '(id TEXT PRIMARY KEY, done BOOLEAN NOT NULL CHECK (done IN (0, 1)), '
+            'text TEXT, importance TEXT, deadline INTEGER, createdAt INTEGER, '
+            'updatedAt INTEGER, lastUpdatedBy TEXT, color TEXT)');
+        await db.execute('CREATE TABLE IF NOT EXISTS $tableRevisions'
+            '(id INTEGER PRIMARY KEY, revision INTEGER)');
+        await db
+            .execute('INSERT INTO $tableRevisions(id, revision) VALUES (1, 0)');
+      },
     );
   }
 
@@ -31,7 +33,7 @@ class DbRepository {
     final Database db = await init();
     var list = await db.query(tableTasks);
     List<Task> parseDb(List<Map<String, Object?>> list) =>
-      list.map((el) => Task.fromDb(el)).toList();
+        list.map((el) => Task.fromDb(el)).toList();
     return compute(parseDb, list);
   }
 
@@ -40,14 +42,14 @@ class DbRepository {
     await db.transaction((txn) async {
       for (var task in tasks) {
         await txn.insert(tableTasks, task.toDb(),
-            conflictAlgorithm: ConflictAlgorithm.ignore);
+            conflictAlgorithm: ConflictAlgorithm.ignore,);
       }
     });
   }
 
   Future<int> addTask(Task task) async {
     final Database db = await init();
-    MyLogger.d("saving ${task.toString()}");
+    MyLogger.d('saving ${task.toString()}');
     return await db.insert(tableTasks, task.toDb());
   }
 

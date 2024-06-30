@@ -12,7 +12,7 @@ const String token = 'Dagnir';
 class Service {
   final Dio dio;
   int revision = 0;
-  
+
   static const String baseUrl = 'https://beta.mrdekk.ru/task';
   static const String listUrl = 'https://beta.mrdekk.ru/task/list';
   String idUrl(String id) => 'https://beta.mrdekk.ru/task/list$id';
@@ -27,11 +27,15 @@ class Service {
       });
 
   Service({required this.dio}) {
-    dio.interceptors.add(InterceptorsWrapper(onRequest: (options, handler) {
-      options.headers['Authorization'] = 'Bearer $token';
-      options.headers['X-Last-Known-Revision'] = revision.toString();
-      return handler.next(options);
-    },),);
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          options.headers['Authorization'] = 'Bearer $token';
+          options.headers['X-Last-Known-Revision'] = revision.toString();
+          return handler.next(options);
+        },
+      ),
+    );
 
     (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
       final client = HttpClient();
@@ -66,9 +70,13 @@ class Service {
   }
 
   Future<TaskListResponse> updateTaskList(
-      List<Task> tasks, int revision,) async {
-    var response = await dio.patch(listUrl,
-        data: taskListToJson(tasks),);
+    List<Task> tasks,
+    int revision,
+  ) async {
+    var response = await dio.patch(
+      listUrl,
+      data: taskListToJson(tasks),
+    );
     if (response.statusCode == 200) {
       var array = response.data['list'] as List<dynamic>;
       return (
@@ -92,8 +100,10 @@ class Service {
   }
 
   Future<TaskResponse?> createTask(Task task, int revision) async {
-    var response = await dio.post(listUrl,
-        data: task.toJson(),);
+    var response = await dio.post(
+      listUrl,
+      data: task.toJson(),
+    );
     if (response.statusCode == 200) {
       var map = response.data['element'] as Map<String, dynamic>;
       return (
@@ -105,8 +115,10 @@ class Service {
   }
 
   Future<TaskResponse?> updateTask(Task task, int revision) async {
-    var response = await dio.put(idUrl(task.id),
-        data: task.toJson(),);
+    var response = await dio.put(
+      idUrl(task.id),
+      data: task.toJson(),
+    );
     if (response.statusCode == 200) {
       var map = response.data['element'] as Map<String, dynamic>;
       return (
@@ -118,8 +130,7 @@ class Service {
   }
 
   Future<TaskResponse?> deleteTask(Task task, int revision) async {
-    var response =
-        await dio.delete(idUrl(task.id));
+    var response = await dio.delete(idUrl(task.id));
     if (response.statusCode == 200) {
       var map = response.data['element'] as Map<String, dynamic>;
       return (

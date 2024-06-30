@@ -8,7 +8,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'add_edit.dart';
 import '../widgets/appbar.dart';
 import '../widgets/list_item.dart';
-import '../../domain/model/task.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -18,7 +17,6 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-
   bool _showCompleted = true;
 
   void callbackSetState() {
@@ -61,7 +59,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                           spreadRadius: 1,
                           blurRadius: 1,
                           offset: const Offset(0, 2),
-                        )
+                        ),
                       ],
                       borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(10),
@@ -73,8 +71,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                TaskPage(task: emptyTask()),
+                            builder: (context) => TaskPage(task: emptyTask()),
                           ),
                         );
                       },
@@ -96,7 +93,10 @@ class _HomePageState extends ConsumerState<HomePage> {
 
                 final task = tasks[index];
                 if (!_showCompleted && task.done) {
-                  return const SizedBox(height: 0,width: 0,);
+                  return const SizedBox(
+                    height: 0,
+                    width: 0,
+                  );
                 }
                 return TaskItem(
                   task: task,
@@ -106,17 +106,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => TaskPage(
-                          task: tasks[index],
+                          task: task,
                         ),
                       ),
                     );
-                  },
-                  onCheckboxChanged: (bool? value) {
-                    setState(() {
-                      MyLogger.d('выполнение таски');
-                      // change task
-                      // task.done = value!;
-                    });
                   },
                 );
               },
@@ -131,8 +124,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  TaskPage(task: emptyTask()),
+              builder: (context) => TaskPage(task: emptyTask()),
             ),
           );
         },

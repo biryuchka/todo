@@ -1,10 +1,10 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:uuid/v4.dart';
 
 import '../../core/providers.dart';
 import '../../domain/model/task.dart';
 
 part 'provider.g.dart';
-
 
 @riverpod
 class TaskState extends _$TaskState {
@@ -16,8 +16,11 @@ class TaskState extends _$TaskState {
 
   Future<void> addOrEditTask(Task task) async {
     List<Task> list;
+
     if (task.id == '') {
-      list = await ref.read(taskRepositoryProvider).addTask(task);
+      list = await ref
+          .read(taskRepositoryProvider)
+          .addTask(task.copyWith(id: const UuidV4().generate()));
     } else {
       list = await ref.read(taskRepositoryProvider).updateTask(task);
     }
@@ -38,7 +41,6 @@ class TaskState extends _$TaskState {
   }
 
   Future<void> markDoneOrNot(Task task, bool done) async {
-    addOrEditTask(task.copyWith(done: done));
+    await addOrEditTask(task.copyWith(done: done));
   }
-
 }

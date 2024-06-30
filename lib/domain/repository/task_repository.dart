@@ -1,7 +1,6 @@
 import '../model/task.dart';
 
 abstract interface class TasksRepository {
-
   Future<List<Task>> getAll();
 
   Future<List<Task>> inlineUpdateTask(Task task);
@@ -12,5 +11,5 @@ abstract interface class TasksRepository {
 
   Future<List<Task>> updateTask(Task task);
 
-  Future<List<Task>> deleteTask(Task task) ;
+  Future<List<Task>> deleteTask(Task task);
 }

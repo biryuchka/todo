@@ -3,16 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo/util/logger.dart';
 import '../../domain/model/task.dart';
 import '../providers/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 
 class TaskItem extends ConsumerStatefulWidget {
   final Task task;
   final VoidCallback onTap;
-  final ValueChanged<bool?> onCheckboxChanged;
 
   const TaskItem({
     required this.task,
     required this.onTap,
-    required this.onCheckboxChanged,
     super.key,
   });
 
@@ -23,6 +23,8 @@ class TaskItem extends ConsumerStatefulWidget {
 class _TaskItemState extends ConsumerState<TaskItem> {
   @override
   Widget build(BuildContext context) {
+    final DateFormat formatter =
+        DateFormat('dd MMMM yyyy', AppLocalizations.of(context).localeName);
     final task = widget.task;
     return Container(
       decoration: const BoxDecoration(
@@ -90,7 +92,12 @@ class _TaskItemState extends ConsumerState<TaskItem> {
         child: ListTile(
           leading: Checkbox(
             value: task.done,
-            onChanged: widget.onCheckboxChanged,
+            onChanged: (bool? value) {
+              ref
+                  .read(taskStateProvider.notifier)
+                  .markDoneOrNot(widget.task, !widget.task.done);
+              MyLogger.d('check ${widget.task.id}');
+            },
             side: BorderSide(
               color: (task.importance == 'high')
                   ? Colors.red
@@ -129,7 +136,7 @@ class _TaskItemState extends ConsumerState<TaskItem> {
                               Positioned(
                                 left: 10,
                                 child: Icon(Icons.priority_high,
-                                    color: Colors.red),
+                                    color: Colors.red,),
                               ),
                               SizedBox(width: 15),
                             ],
@@ -173,7 +180,7 @@ class _TaskItemState extends ConsumerState<TaskItem> {
             ],
           ),
           subtitle: Text(
-            task.deadline as String,
+            task.deadline == null ? '' : formatter.format(task.deadline!),
             style: TextStyle(
               fontSize: 14,
               height: 20 / 14,

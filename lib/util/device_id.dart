@@ -6,11 +6,12 @@ Future<String?> getId() async {
   if (Platform.isIOS) {
     var iosDeviceInfo = await deviceInfo.iosInfo;
     return iosDeviceInfo.identifierForVendor;
-  } else if(Platform.isAndroid) {
+  } else if (Platform.isAndroid) {
     var androidDeviceInfo = await deviceInfo.androidInfo;
     return androidDeviceInfo.id;
-  } else if(Platform.isWindows){
+  } else if (Platform.isWindows) {
     var windowsDeviceInfo = await deviceInfo.windowsInfo;
     return windowsDeviceInfo.deviceId;
   }
+  return null;
 }

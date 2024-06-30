@@ -1,5 +1,3 @@
-import 'package:uuid/v4.dart';
-import '../../util/device_id.dart';
 import 'dart:convert';
 
 class Task {
@@ -25,7 +23,6 @@ class Task {
     required this.changedAt,
   });
 
-
   factory Task.fromDb(Map<String, Object?> object) => Task(
         id: object['id'] as String,
         done: object['done'] as int == 1,
@@ -39,9 +36,7 @@ class Task {
         changedAt:
             DateTime.fromMillisecondsSinceEpoch(object['updatedAt'] as int),
         lastUpdatedBy: object['lastUpdatedBy'] as String,
-        color: object['color'] != null
-            ? object['color'] as String
-            : null,
+        color: object['color'] != null ? object['color'] as String : null,
       );
 
   Map<String, dynamic> toDb() => {
@@ -68,10 +63,9 @@ class Task {
         'color': color,
       };
 
-
   String toJson() => jsonEncode({
         'element': toMap(),
-  });
+      });
 
   factory Task.fromJson(Map<String, dynamic> object) => Task(
         id: object['id'] as String,
@@ -86,9 +80,7 @@ class Task {
         changedAt:
             DateTime.fromMillisecondsSinceEpoch(object['updatedAt'] as int),
         lastUpdatedBy: object['lastUpdatedBy'] as String,
-        color: object['color'] != null
-            ? object['color'] as String
-            : null,
+        color: object['color'] != null ? object['color'] as String : null,
       );
 
   Task copyWith({
@@ -119,14 +111,15 @@ class Task {
 }
 
 Task emptyTask() {
-    return Task(id: const UuidV4().generate(),
-        createdAt : DateTime.now(),
-        changedAt : DateTime.now(),
-        lastUpdatedBy : '',
-        done : false,
-        text : '',
-        importance : 'basic',
-        deadline : null,
-        color : '',
-        );
-  }
+  return Task(
+    id: '',
+    createdAt: DateTime.now(),
+    changedAt: DateTime.now(),
+    lastUpdatedBy: '',
+    done: false,
+    text: '',
+    importance: 'basic',
+    deadline: null,
+    color: '',
+  );
+}

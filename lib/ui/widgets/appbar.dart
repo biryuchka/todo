@@ -4,21 +4,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MySliverAppBar extends SliverPersistentHeaderDelegate {
-
   final int completedCount;
   final VoidCallback onEyePressed;
   var eyeIcon = Icons.visibility;
 
-  MySliverAppBar ({
+  MySliverAppBar({
     required this.completedCount,
     required this.onEyePressed,
   });
 
   @override
   Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
+      BuildContext context, double shrinkOffset, bool overlapsContent,) {
     double shift = min(1, shrinkOffset / (164 - 80));
-    return StackBar(completedCount: completedCount, onEyePressed: onEyePressed, shift: shift);
+    return StackBar(
+        completedCount: completedCount,
+        onEyePressed: onEyePressed,
+        shift: shift,);
   }
 
   @override
@@ -35,7 +37,8 @@ class StackBar extends StatefulWidget {
   final int completedCount;
   final VoidCallback onEyePressed;
   final double shift;
-  const StackBar ({super.key,
+  const StackBar({
+    super.key,
     required this.completedCount,
     required this.onEyePressed,
     required this.shift,
@@ -46,7 +49,6 @@ class StackBar extends StatefulWidget {
 }
 
 class _StackBarState extends State<StackBar> {
-
   var eyeIcon = Icons.visibility;
 
   @override
@@ -114,8 +116,4 @@ class _StackBarState extends State<StackBar> {
       ],
     );
   }
-
 }
-
-
-

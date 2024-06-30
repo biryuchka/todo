@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_single_quotes
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -13,9 +12,9 @@ import '../providers/provider.dart';
 
 class TaskPage extends ConsumerStatefulWidget {
   const TaskPage({
-      required this.task,
-      super.key,
-      });
+    required this.task,
+    super.key,
+  });
 
   final Task task;
 
@@ -34,38 +33,33 @@ class _TaskPageState extends ConsumerState<TaskPage> {
 
   @override
   void initState() {
+    super.initState();
     initializeDateFormatting();
-    task = widget.task;
-    if (widget.task.done) {
-      if (widget.task.importance == 'low') {
-        importanceStr = AppLocalizations.of(context).importance_low;
-      } else if (widget.task.importance == 'high') {
-        importanceStr = AppLocalizations.of(context).importance_high;
-      } else {
-        importanceStr = AppLocalizations.of(context).importance_basic;
-      }
+    if (widget.task.id != '') {
+      importanceStr = widget.task.importance;
       controller.text = widget.task.text;
       if (widget.task.deadline != null) {
         deadlineSwitch = true;
-        deadlineDate = DateFormat('dd MMM yyyy', AppLocalizations.of(context).localeName).format(widget.task.deadline!);
+        deadlineDate = DateFormat('dd mm yyyy').format(widget.task.deadline!);
       }
     }
-    super.initState();
+    task = widget.task;
   }
 
   DateTime selectedDate = DateTime.utc(1900);
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: selectedDate,
-        firstDate: DateTime(2016, 8),
-        lastDate: DateTime(2040),
-        );
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(2016, 8),
+      lastDate: DateTime(2040),
+    );
     if (picked != null &&
         (selectedDate.year == 1900 || picked != selectedDate)) {
       setState(() {
         selectedDate = picked;
+        deadline = picked;
       });
     }
   }
@@ -79,21 +73,32 @@ class _TaskPageState extends ConsumerState<TaskPage> {
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        backgroundColor: Color.fromARGB(255, 244, 237, 206),
+        backgroundColor: const Color.fromARGB(255, 244, 237, 206),
         foregroundColor: const Color(0xFF000000),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.end,
-          children: [ IconButton(
-            onPressed: () {
-              var tmpImportance = importanceStr == AppLocalizations.of(context).importance_low ? 'low' 
-              : (importanceStr == AppLocalizations.of(context).importance_basic ? 'basic' : 'high');
-              ref.read(taskStateProvider.notifier).addOrEditTask(
-                task.copyWith(text: controller.text, 
-                deadline: deadline, importance: tmpImportance,),);
-              MyLogger.d('Сохранить');
-              Navigator.pop(context);
-            }, 
-            icon:const Icon(Icons.save),
+          children: [
+            IconButton(
+              onPressed: () {
+                var tmpImportance =
+                    importanceStr == AppLocalizations.of(context).importance_low
+                        ? 'low'
+                        : (importanceStr ==
+                                AppLocalizations.of(context).importance_basic
+                            ? 'basic'
+                            : 'high');
+
+                ref.read(taskStateProvider.notifier).addOrEditTask(
+                      task.copyWith(
+                        text: controller.text,
+                        deadline: deadline,
+                        importance: tmpImportance,
+                      ),
+                    );
+                MyLogger.d('Сохранить');
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.save),
             ),
           ],
         ),
@@ -126,7 +131,6 @@ class _TaskPageState extends ConsumerState<TaskPage> {
                   ),
                   minLines: 4,
                   maxLines: 120,
-
                 ),
               ),
               PopupMenuButton(
@@ -140,14 +144,15 @@ class _TaskPageState extends ConsumerState<TaskPage> {
                   PopupMenuItem(
                     value: 0,
                     child: Text(
-                      AppLocalizations.of(context).importance_basic, 
+                      AppLocalizations.of(context).importance_basic,
                       style: const TextStyle(
                         fontWeight: FontWeight.w400,
                         fontSize: 16,
                       ),
                     ),
                     onTap: () {
-                      importanceStr = AppLocalizations.of(context).importance_basic;
+                      importanceStr =
+                          AppLocalizations.of(context).importance_basic;
                       setState(() {});
                       MyLogger.d('Изменение приоритета');
                     },
@@ -162,7 +167,8 @@ class _TaskPageState extends ConsumerState<TaskPage> {
                       ),
                     ),
                     onTap: () {
-                      importanceStr = AppLocalizations.of(context).importance_low;
+                      importanceStr =
+                          AppLocalizations.of(context).importance_low;
                       setState(() {});
                       MyLogger.d('Изменение приоритета');
                     },
@@ -170,7 +176,8 @@ class _TaskPageState extends ConsumerState<TaskPage> {
                   PopupMenuItem(
                     value: 2,
                     onTap: () {
-                      importanceStr = AppLocalizations.of(context).importance_high;
+                      importanceStr =
+                          AppLocalizations.of(context).importance_high;
                       setState(() {});
                       MyLogger.d('Изменение приоритета');
                     },
@@ -209,7 +216,6 @@ class _TaskPageState extends ConsumerState<TaskPage> {
                         setState(() {
                           deadlineDate =
                               DateFormat('d MMMM yyyy').format(selectedDate);
-                          deadline = selectedDate;
                         });
                       });
                     } else {
@@ -240,12 +246,11 @@ class _TaskPageState extends ConsumerState<TaskPage> {
                 onTap: () {
                   MyLogger.d('удаление');
                 },
-                title: Text(
-                  AppLocalizations.of(context).delete,
+                title: Text(AppLocalizations.of(context).delete,
                     style: const TextStyle(
                       fontWeight: FontWeight.w400,
                       fontSize: 16,
-                    )),
+                    ),),
                 leading: Icon(
                   Icons.delete,
                   color: widget.task.done ? Colors.red : Colors.grey,
