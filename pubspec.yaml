@@ -26,7 +26,7 @@ dependencies:
   riverpod_annotation: ^2.3.5
 
 
-  flutter_gen: any
+  # flutter_gen: any
   intl: any
   path: any
 dev_dependencies:

@@ -19,8 +19,8 @@
 
 ## Скриншоты из приложения
 
-![App Screenshot](/screens/homepage.jpg)
-![App Screenshot](/screens/task.jpg)
+<img src="/screens/homepage.jpg" alt="drawing" width="200" height="300"/>
+<img src="/screens/task.jpg" alt="drawing" width="200" height="300"/>
 ![App Screenshot](/screens/icon.jpg)
 
 ## APK
