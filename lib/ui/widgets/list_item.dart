@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:todo/util/logger.dart';
+import '../../domain/model/task.dart';
+import '../providers/provider.dart';
 
-
-class TaskItem extends StatefulWidget {
-  final Map<String, dynamic> task;
-  final DismissDirectionCallback onDismissed;
+class TaskItem extends ConsumerStatefulWidget {
+  final Task task;
   final VoidCallback onTap;
   final ValueChanged<bool?> onCheckboxChanged;
 
   const TaskItem({
     required this.task,
-    required this.onDismissed,
     required this.onTap,
     required this.onCheckboxChanged,
     super.key,
   });
 
   @override
-  _TaskItemState createState() => _TaskItemState();
+  ConsumerState<TaskItem> createState() => _TaskItemState();
 }
 
-class _TaskItemState extends State<TaskItem> {
+class _TaskItemState extends ConsumerState<TaskItem> {
   @override
   Widget build(BuildContext context) {
     final task = widget.task;
@@ -36,7 +37,7 @@ class _TaskItemState extends State<TaskItem> {
         right: 8,
       ),
       child: Dismissible(
-        key: Key(task['title']),
+        key: ValueKey(task.id),
         background: Container(
           color: Colors.green,
           padding: const EdgeInsets.only(left: 27),
@@ -63,27 +64,48 @@ class _TaskItemState extends State<TaskItem> {
           ),
         ),
         confirmDismiss: (direction) async {
-          widget.onDismissed(direction);
-          return direction == DismissDirection.endToStart;
+          if (direction == DismissDirection.startToEnd) {
+            MyLogger.d('Mark done action.id: ${widget.task.id}');
+            setState(() {
+              ref
+                  .read(taskStateProvider.notifier)
+                  .markDoneOrNot(widget.task, true);
+            });
+
+            await ref
+                .read(taskStateProvider.notifier)
+                .markDoneOrNot(widget.task, widget.task.done);
+            return false;
+          } else if (direction == DismissDirection.endToStart) {
+            return true;
+          }
+          return false;
+        },
+        onDismissed: (direction) {
+          if (direction == DismissDirection.endToStart) {
+            MyLogger.d('Delete action.id: ${widget.task.id}');
+            ref.read(taskStateProvider.notifier).deleteTask(widget.task);
+          }
         },
         child: ListTile(
           leading: Checkbox(
-            value: task['completed'],
+            value: task.done,
             onChanged: widget.onCheckboxChanged,
             side: BorderSide(
-              color:
-              (task["important"] == 1) ? Colors.red : Colors.grey.shade500,
+              color: (task.importance == 'high')
+                  ? Colors.red
+                  : Colors.grey.shade500,
               width: 1.5,
             ),
             fillColor: MaterialStateProperty.resolveWith<Color>(
-                    (Set<MaterialState> states) {
-                  if (states.contains(MaterialState.selected)) {
-                    return Colors.green;
-                  }
-                  return (task["important"] == 1)
-                      ? Colors.red.withOpacity(.3)
-                      : Colors.white;
-                }),
+                (Set<MaterialState> states) {
+              if (states.contains(MaterialState.selected)) {
+                return Colors.green;
+              }
+              return (task.importance == 'high')
+                  ? Colors.red.withOpacity(.3)
+                  : Colors.white;
+            }),
           ),
           trailing: IconButton(
             icon: const Icon(Icons.info_outline),
@@ -96,10 +118,10 @@ class _TaskItemState extends State<TaskItem> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    padding: const EdgeInsets.only(top: 10, left: 0, right: 5),
+                    padding: const EdgeInsets.only(top: 20, left: 0, right: 5),
                     child: Builder(
                       builder: (context) {
-                        if (task["important"] == 1) {
+                        if (task.importance == 'high') {
                           return const Stack(
                             alignment: Alignment.centerLeft,
                             children: [
@@ -112,7 +134,7 @@ class _TaskItemState extends State<TaskItem> {
                               SizedBox(width: 15),
                             ],
                           );
-                        } else if (task["important"] == -1) {
+                        } else if (task.importance == 'low') {
                           return const Stack(
                             alignment: Alignment.centerRight,
                             children: [
@@ -128,14 +150,14 @@ class _TaskItemState extends State<TaskItem> {
                   ),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 15),
+                      padding: const EdgeInsets.only(top: 20),
                       child: Text(
-                        task['title'],
+                        task.text,
                         style: TextStyle(
-                          decoration: task['completed']
+                          decoration: task.done
                               ? TextDecoration.lineThrough
                               : TextDecoration.none,
-                          color: task['completed']
+                          color: task.done
                               ? Colors.grey.withOpacity(0.5)
                               : Colors.black,
                           fontSize: 16,
@@ -151,7 +173,7 @@ class _TaskItemState extends State<TaskItem> {
             ],
           ),
           subtitle: Text(
-            task['date'] ?? "",
+            task.deadline as String,
             style: TextStyle(
               fontSize: 14,
               height: 20 / 14,

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MySliverAppBar extends SliverPersistentHeaderDelegate {
 
@@ -50,7 +51,6 @@ class _StackBarState extends State<StackBar> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Stack(
       clipBehavior: Clip.none,
       fit: StackFit.passthrough,
@@ -68,7 +68,7 @@ class _StackBarState extends State<StackBar> {
           left: 60 - 44 * widget.shift,
           top: 82 - 46 * widget.shift,
           child: Text(
-            "Мои дела",
+            AppLocalizations.of(context).todos,
             style: TextStyle(
               fontWeight: FontWeight.w500,
               color: Colors.black,
@@ -83,7 +83,7 @@ class _StackBarState extends State<StackBar> {
           child: Opacity(
             opacity: 1 - widget.shift < 1 ? 0 : 1,
             child: Text(
-              'Выполнено — ${widget.completedCount} дел',
+              '${AppLocalizations.of(context).completed} — ${widget.completedCount}',
               style: const TextStyle(
                 fontSize: 16,
                 color: Color(0x4C000000),
