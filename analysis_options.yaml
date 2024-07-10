@@ -1,0 +1,12 @@
+include: package:flutter_lints/flutter.yaml
+
+linter:
+
+  rules:
+    - avoid_dynamic_calls
+    - avoid_print
+    - prefer_single_quotes
+    - annotate_overrides
+    - file_names
+    - require_trailing_commas
+    - use_named_constants

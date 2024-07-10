@@ -1,0 +1,13 @@
+{
+    "todos": "My to-do's",
+    "completed": "Completed",
+    "new_todo": "New ToDo",
+    "save": "Save",
+    "importance": "Importance",
+    "importance_basic": "Basic",
+    "importance_low": "Low",
+    "importance_high": "!!High",
+    "do_until": "Do until",
+    "delete": "Delete",
+    "hint": "What should be done"
+}
